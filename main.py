@@ -39,6 +39,10 @@ def get_can_finish(car, dc, time):
 	return good
 
 
+def sort_by_good_earliest(early, car):
+	pass
+
+
 files = ["a_example.in", "b_should_be_easy.in", "c_no_hurry.in", "d_metropolis.in", "e_high_bonus.in"]
 
 
@@ -57,6 +61,7 @@ for file in files:
 			if not len(early):
 				early = get_can_finish(car, dc, time)
 			closest = sorted(early, key=lambda x: manh(x.start, car.coords)) # get better
+			# closest = sorted(early, key=lambda x: abs(manh(x.start, car.coords) + time - x.e)) # get better
 			if not closest:
 				break
 			car.busy = count_busy(car, closest[0], time)
@@ -70,6 +75,6 @@ for file in files:
 
 	with open("answer/" + file[:-2] + 'out', 'w') as f:
 		for car in dc.cars:
-			f.write(str(car.id) + ' ' + ' '.join([str(s) for s in car.rides]) + '\n')
+			f.write(str(len(car.rides)) + ' ' + ' '.join([str(s) for s in car.rides]) + '\n')
 	# for car in dc.cars:
 	# 	print(str(car.id) + ' ' + ' '.join([str(s) for s in car.rides]))
