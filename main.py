@@ -44,9 +44,9 @@ def sort_by_good_earliest(early, car):
 
 
 
-def can_in_time(dc, ride):
+def can_in_time(cars, ride):
 	good = []
-	for car in dc.cars:
+	for car in cars:
 		if car.busy:
 			continue
 		if ride.e >= time + manh(car.coords, ride.start):
@@ -98,7 +98,8 @@ for file in files:
 	for i in range(dc.vehicles):
 		dc.cars.append(Cars(i + 1))
 
-
+	# not_busy_c = dc.cars
+	not_cycle = False
 	for time in range(dc.t):
 		# for car in dc.cars:
 		# 	if car.busy > 0:
@@ -116,17 +117,27 @@ for file in files:
 		# 	car.rides.append(closest[0].id)
 		# 	# print(car.id + ' ' + )
 
-		for ride in dc.ridesLst:
-			if ride.busy:
-				continue
-			can_in_time_c = can_in_time(dc, ride)
-			if not can_in_time_c:
-				continue
-			# can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
-			can_in_time_c = mine_sort_cars_abs(ride, can_in_time_c, time) # get better
-			can_in_time_c.busy = count_busy(can_in_time_c, ride, time)
-			ride.busy = True
-			can_in_time_c.rides.append(ride.id)
+
+		done_something = False
+
+
+
+
+		if not not_cycle:
+			for ride in dc.ridesLst:
+				if ride.busy:
+					continue
+				can_in_time_c = can_in_time(dc.cars, ride)
+				if not can_in_time_c:
+					continue
+				# can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
+				can_in_time_c = mine_sort_cars_abs(ride, can_in_time_c, time) # get better
+				can_in_time_c.busy = count_busy(can_in_time_c, ride, time)
+				ride.busy = True
+				can_in_time_c.rides.append(ride.id)
+
+		if done_something == False:
+			not_cycle = True
 
 		for ride in dc.ridesLst:
 			if ride.busy:
@@ -141,11 +152,12 @@ for file in files:
 				ride.busy = True
 				car_time.rides.append(ride.id)
 
+
 		for car in dc.cars:
 			if car.busy > 0:
 				car.busy -= 1
-		if time % 1000000 == 0:
-			print("Time " + time / dc.t)
+		if time % 1000 == 0:
+			print("Time " + str(time / dc.t))
 	print("File " + file + " ended")
 
 	with open("answer/" + file[:-2] + 'out', 'w') as f:
