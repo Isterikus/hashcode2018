@@ -1,4 +1,4 @@
-class DataContainer:
+class Ride:
 
     def __init__(self):
         pass
