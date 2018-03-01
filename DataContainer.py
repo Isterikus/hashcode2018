@@ -6,6 +6,7 @@ class DataContainer:
         self.vehicles = vehicles
         self.rides = rides
         self.bonus = bonus
-        self.steps = steps
+        self.t = steps
         self.ridesLst = []
+        self.cars = []
 
