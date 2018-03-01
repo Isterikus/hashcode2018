@@ -1,0 +1,22 @@
+class DataContainer:
+
+    def __init__(self):
+        self.srav =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
+        self. =
