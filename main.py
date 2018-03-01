@@ -71,6 +71,28 @@ def car_not_busy(cars):
 	return good
 
 
+def	mine_sort_cars_manh(ride, cars):
+	min_car = cars[0]
+	min_manh = manh(cars[0].coords, ride.start)
+	for car in cars:
+		mh = manh(car.coords, ride.start)
+		if mh < min_manh:
+			min_manh = mh
+			min_car = car
+	return min_car
+
+
+def mine_sort_cars_abs(ride, cars, time):
+	min_car = cars[0]
+	min_manh = manh(cars[0].coords, ride.start)
+	for car in cars:
+		mh = abs(manh(ride.start, car.coords) - (ride.e - time))
+		if mh < min_manh:
+			min_manh = mh
+			min_car = car
+	return min_car
+
+
 for file in files:
 	dc = read.getDataContainer('data/' + file)
 	for i in range(dc.vehicles):
@@ -100,10 +122,11 @@ for file in files:
 			can_in_time_c = can_in_time(dc, ride)
 			if not can_in_time_c:
 				continue
-			can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
-			can_in_time_c[0].busy = count_busy(can_in_time_c[0], ride, time)
+			# can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
+			can_in_time_c = mine_sort_cars_abs(ride, can_in_time_c, time) # get better
+			can_in_time_c.busy = count_busy(can_in_time_c, ride, time)
 			ride.busy = True
-			can_in_time_c[0].rides.append(ride.id)
+			can_in_time_c.rides.append(ride.id)
 
 		for ride in dc.ridesLst:
 			if ride.busy:
@@ -111,15 +134,19 @@ for file in files:
 			cars_not_b = car_not_busy(dc.cars)
 			if not cars_not_b:
 				break
-			car_time = sorted(cars_not_b, key=lambda x: manh(x.coords, ride.start))
-			if time + manh(car_time[0].coords, ride.start) + manh(ride.start, ride.finish) <= ride.l:
-				car_time[0].busy = count_busy(car_time[0], ride, time)
+			# car_time = sorted(cars_not_b, key=lambda x: manh(x.coords, ride.start))
+			car_time = mine_sort_cars_manh(ride, cars_not_b)
+			if time + manh(car_time.coords, ride.start) + manh(ride.start, ride.finish) <= ride.l:
+				car_time.busy = count_busy(car_time, ride, time)
 				ride.busy = True
-				car_time[0].rides.append(ride.id)
+				car_time.rides.append(ride.id)
 
 		for car in dc.cars:
 			if car.busy > 0:
 				car.busy -= 1
+		if time % 1000000 == 0:
+			print("Time " + time / dc.t)
+	print("File " + file + " ended")
 
 	with open("answer/" + file[:-2] + 'out', 'w') as f:
 		for car in dc.cars:
