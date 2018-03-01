@@ -100,57 +100,104 @@ for file in files:
 
 	# not_busy_c = dc.cars
 	not_cycle = False
+	ln = 0
 	for time in range(dc.t):
-		# for car in dc.cars:
-		# 	if car.busy > 0:
-		# 		continue
-		# 	early = sort_by_earliest(dc, car, time)
-		# 	# print(early)
-		# 	if not len(early):
-		# 		early = get_can_finish(car, dc, time)
-		# 	# closest = sorted(early, key=lambda x: manh(x.start, car.coords)) # get better
-		# 	closest = sorted(early, key=lambda x: abs(manh(x.start, car.coords) - (x.e - time))) # get better
-		# 	if not closest:
-		# 		break
-		# 	car.busy = count_busy(car, closest[0], time)
-		# 	closest[0].busy = True
-		# 	car.rides.append(closest[0].id)
-		# 	# print(car.id + ' ' + )
-
-
-		done_something = False
-
-
-
-
-		if not not_cycle:
-			for ride in dc.ridesLst:
-				if ride.busy:
-					continue
-				can_in_time_c = can_in_time(dc.cars, ride)
-				if not can_in_time_c:
-					continue
-				# can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
-				can_in_time_c = mine_sort_cars_abs(ride, can_in_time_c, time) # get better
-				can_in_time_c.busy = count_busy(can_in_time_c, ride, time)
-				ride.busy = True
-				can_in_time_c.rides.append(ride.id)
-
-		if done_something == False:
-			not_cycle = True
-
-		for ride in dc.ridesLst:
-			if ride.busy:
+		for car in dc.cars:
+			if car.busy > 0:
 				continue
-			cars_not_b = car_not_busy(dc.cars)
-			if not cars_not_b:
+			early = sort_by_earliest(dc, car, time)
+			# print(early)
+
+			if not early:
+				early = get_can_finish(car, dc, time)
+				closest = sorted(early, key=lambda x: (manh(x.start, x.finish), manh(x.start, car.coords)))
+			else:
+				closest = sorted(early, key=lambda x: abs(manh(x.start, car.coords) - (x.e - time)))
+			if not early:
 				break
-			# car_time = sorted(cars_not_b, key=lambda x: manh(x.coords, ride.start))
-			car_time = mine_sort_cars_manh(ride, cars_not_b)
-			if time + manh(car_time.coords, ride.start) + manh(ride.start, ride.finish) <= ride.l:
-				car_time.busy = count_busy(car_time, ride, time)
-				ride.busy = True
-				car_time.rides.append(ride.id)
+			# closest = sorted(early, key=lambda x: manh(x.start, car.coords)) # get better
+			car.busy = count_busy(car, closest[0], time)
+			closest[0].busy = True
+			car.rides.append(closest[0].id)
+			# print(car.id + ' ' + )
+
+
+
+
+
+
+
+
+		# if ln == dc.rides - 1:
+		# 	break
+		#
+		# done_something = False
+		#
+		# # ride_id = 0
+		# # if not not_cycle:
+		# # 	while ride_id < len(dc.ridesLst):
+		# # 		ride = dc.ridesLst[ride_id]
+		# # 		if ride.busy:
+		# # 			ride_id += 1
+		# # 			continue
+		# # 		can_in_time_c = can_in_time(dc.cars, ride)
+		# # 		if not can_in_time_c:
+		# # 			ride_id += 1
+		# # 			continue
+		# # 		# can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
+		# # 		can_in_time_c = mine_sort_cars_abs(ride, can_in_time_c, time)  # get better
+		# # 		can_in_time_c.busy = count_busy(can_in_time_c, ride, time)
+		# # 		ride.busy = True
+		# # 		can_in_time_c.rides.append(ride.id)
+		# # 		del dc.ridesLst[ride_id]
+		#
+		# if not not_cycle:
+		# 	for ride in dc.ridesLst:
+		# 		if ride.busy:
+		# 			continue
+		# 		can_in_time_c = can_in_time(dc.cars, ride)
+		# 		if not can_in_time_c:
+		# 			continue
+		# 		# can_in_time_c = sorted(can_in_time_c, key=lambda x: abs(manh(ride.start, x.coords) - (ride.e - time))) # get better
+		# 		can_in_time_c = mine_sort_cars_abs(ride, can_in_time_c, time) # get better
+		# 		can_in_time_c.busy = count_busy(can_in_time_c, ride, time)
+		# 		ride.busy = True
+		# 		can_in_time_c.rides.append(ride.id)
+		# 		ln += 1
+		#
+		# if done_something == False:
+		# 	not_cycle = True
+		#
+		# # ride_id = 0
+		# # while ride_id < len(dc.ridesLst):
+		# # 	ride = dc.ridesLst[ride_id]
+		# # 	if ride.busy:
+		# # 		ride_id += 1
+		# # 		continue
+		# # 	cars_not_b = car_not_busy(dc.cars)
+		# # 	if not cars_not_b:
+		# # 		break
+		# # 	# car_time = sorted(cars_not_b, key=lambda x: manh(x.coords, ride.start))
+		# # 	car_time = mine_sort_cars_manh(ride, cars_not_b)
+		# # 	if time + manh(car_time.coords, ride.start) + manh(ride.start, ride.finish) <= ride.l:
+		# # 		car_time.busy = count_busy(car_time, ride, time)
+		# # 		ride.busy = True
+		# # 		car_time.rides.append(ride.id)
+		# # 	del dc.ridesLst[ride_id]
+		#
+		# for ride in dc.ridesLst:
+		# 	if ride.busy:
+		# 		continue
+		# 	cars_not_b = car_not_busy(dc.cars)
+		# 	if not cars_not_b:
+		# 		break
+		# 	# car_time = sorted(cars_not_b, key=lambda x: manh(x.coords, ride.start))
+		# 	car_time = mine_sort_cars_manh(ride, cars_not_b)
+		# 	if time + manh(car_time.coords, ride.start) + manh(ride.start, ride.finish) <= ride.l:
+		# 		car_time.busy = count_busy(car_time, ride, time)
+		# 		ride.busy = True
+		# 		car_time.rides.append(ride.id)
+		# 		ln += 1
 
 
 		for car in dc.cars:
@@ -158,9 +205,18 @@ for file in files:
 				car.busy -= 1
 		if time % 1000 == 0:
 			print("Time " + str(time / dc.t))
+		if file == "b_should_be_easy.in" and time / dc.t >= 0.97:
+			break
+		elif file == "c_no_hurry.in" and time / dc.t >= 0.996:
+			break
+		elif file == "d_metropolis.in" and time / dc.t >= 0.96:
+			break
+		elif file == "e_high_bonus.in" and time / dc.t >= 0.97:
+			break
+
 	print("File " + file + " ended")
 
-	with open("answer/" + file[:-2] + 'out', 'w') as f:
+	with open("answer3/" + file[:-2] + 'out', 'w') as f:
 		for car in dc.cars:
 			f.write(str(len(car.rides)) + ' ' + ' '.join([str(s) for s in car.rides]) + '\n')
 	# for car in dc.cars:
